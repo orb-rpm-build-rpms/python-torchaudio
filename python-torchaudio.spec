@@ -1,6 +1,6 @@
 %global pypi_name torchaudio
 
-%bcond_without gitcommit
+%bcond_with gitcommit
 %if %{with gitcommit}
 # The release/2.3.0
 %global commit0 17a70815259222570feb071034acd7bae2adc019
@@ -8,7 +8,7 @@
 %global date0 20240318
 %global pypi_version 2.3.0
 %else
-%global pypi_version 2.3.0
+%global pypi_version 2.4.1
 %endif
 
 %global desc %{expand: \
@@ -29,7 +29,7 @@ makes it easy to use and feel like a natural extension. }
 %endif
 %endif
 # Which families gpu build for
-%global rocm_gpu_list gfx8 gfx9 gfx10 gfx11
+%global rocm_gpu_list gfx9
 %global rocm_default_gpu default
 %bcond_without rocm_loop
 
@@ -66,6 +66,7 @@ BuildRequires:  sox-devel
 
 %if %{with rocm}
 BuildRequires:  hipblas-devel
+BuildRequires:  hipblaslt-devel
 BuildRequires:  hipcub-devel
 BuildRequires:  hipfft-devel
 BuildRequires:  hiprand-devel
@@ -101,28 +102,10 @@ Summary:        Audio signal processing, powered by PyTorch
 %{desc}
 
 %if %{with rocm}
-%package -n python3-%{pypi_name}-rocm-gfx8
-Summary:        %{name} for ROCm gfx8
-
-%description -n python3-%{pypi_name}-rocm-gfx8
-%{summary}
-
 %package -n python3-%{pypi_name}-rocm-gfx9
 Summary:        %{name} for ROCm gfx9
 
 %description -n python3-%{pypi_name}-rocm-gfx9
-%{summary}
-
-%package -n python3-%{pypi_name}-rocm-gfx10
-Summary:        %{name} for ROCm gfx10
-
-%description -n python3-%{pypi_name}-rocm-gfx10
-%{summary}
-
-%package -n python3-%{pypi_name}-rocm-gfx11
-Summary:        %{name} for ROCm gfx11
-
-%description -n python3-%{pypi_name}-rocm-gfx11
 %{summary}
 
 %endif
@@ -230,17 +213,9 @@ done
 %{python3_sitearch}/%{pypi_name}-*.egg-info/
 
 %if %{with rocm}
-%files -n python3-%{pypi_name}-rocm-gfx8
-%{_libdir}/rocm/gfx8/lib64/*
-
 %files -n python3-%{pypi_name}-rocm-gfx9
 %{_libdir}/rocm/gfx9/lib64/*
 
-%files -n python3-%{pypi_name}-rocm-gfx10
-%{_libdir}/rocm/gfx10/lib64/*
-
-%files -n python3-%{pypi_name}-rocm-gfx11
-%{_libdir}/rocm/gfx11/lib64/*
 %endif
 
 %changelog
