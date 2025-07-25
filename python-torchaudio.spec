@@ -109,6 +109,9 @@ Summary:        Audio signal processing, powered by PyTorch
 
 rm -rf third_party/*
 
+%generate_buildrequires
+%pyproject_buildrequires
+
 %build
 # Building uses python3_sitearch/torch/utils/cpp_extension.py
 # cpp_extension.py does a general linking with all the pytorch libs which
@@ -127,11 +130,11 @@ RESOURCE_DIR=`${HIP_CLANG_PATH}/clang -print-resource-dir`
 export DEVICE_LIB_PATH=${RESOURCE_DIR}/amdgcn/bitcode
 
 export PYTORCH_ROCM_ARCH=%{rocm_gpu_list_default}
-%py3_build
+%pyproject_wheel
 
 %else
 
-%py3_build
+%pyproject_wheel
 
 %endif
 
@@ -147,10 +150,12 @@ RESOURCE_DIR=`${HIP_CLANG_PATH}/clang -print-resource-dir`
 export DEVICE_LIB_PATH=${RESOURCE_DIR}/amdgcn/bitcode
 
 export PYTORCH_ROCM_ARCH=%{rocm_gpu_list_default}
-%py3_install
+%pyproject_install
+%pyproject_save_files %{pypi_name}
 
 %else
-%py3_install
+%pyproject_install
+%pyproject_save_files %{pypi_name}
 
 %endif
 
@@ -161,12 +166,10 @@ for f in `find %{buildroot} -name '*.py'`; do
     fi
 done
 
-%files -n python3-%{pypi_name}
+%files -n python3-%{pypi_name}  -f %{pyproject_files}
 %license LICENSE
 %doc README.md 
-%{python3_sitearch}/%{pypi_name}
 %{python3_sitearch}/torio
-%{python3_sitearch}/%{pypi_name}-*.egg-info/
 
 %changelog
 %autochangelog
